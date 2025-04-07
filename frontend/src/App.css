@@ -1,2 +1,26 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+/* Hide scrollbar by default, show on hover */
+.chat-scroll-area {
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  }
+  
+  .chat-scroll-area::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .chat-scroll-area::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .chat-scroll-area::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+  }
+  
+  .chat-scroll-area:hover::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.4);
+  }
+  
