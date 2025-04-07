@@ -2,6 +2,7 @@ const express = require("express");
 const fs = require("fs");
 const path = require("path");
 const router = express.Router();
+const axios = require('axios');
 const cloudinary = require("../utils/cloudinary"); // Your Cloudinary config
 const upload = require("../middleware/multer");    // Your multer middleware
 
@@ -28,11 +29,16 @@ router.post("/api/upload", upload.single("docUpload"), async (req, res) => {
       if (err) console.error("Error deleting temp file:", err);
     });
 
+    const response = await axios.post("http://localhost:8000/process", {
+      file_url: result.secure_url,
+    });
+
     res.status(200).json({
       success: true,
       message: "File uploaded successfully!",
       url: result.secure_url,
       public_id: result.public_id,
+      vectorCount: response.data.vector_count,
     });
   } catch (err) {
     console.error("Cloudinary upload error:", err);

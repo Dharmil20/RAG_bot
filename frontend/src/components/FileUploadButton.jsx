@@ -1,16 +1,14 @@
 import { useRef, useState } from "react";
 import axios from "axios";
+import { FiPlus } from "react-icons/fi";
 
 function FileUploadButton() {
   const fileInputRef = useRef(null);
   const [isUploading, setIsUploading] = useState(false);
-  // const [fileName, setFileName] = useState("")
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // setFileName(file.name);
-      // You can auto-upload here if you want
       handleUpload(file);
     }
   };
@@ -45,36 +43,23 @@ function FileUploadButton() {
   };
 
   return (
-    <div
-      style={{
-        padding: "20px",
-        maxWidth: "400px",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
+    <div className="p-1 max-w-md flex flex-col">
       <input
         type="file"
         ref={fileInputRef}
         onChange={handleFileChange}
-        style={{ display: "none" }}
+        className="hidden"
       />
 
       <button
         type="button"
         onClick={triggerFileInput}
         disabled={isUploading}
-        style={{
-          padding: "10px 20px",
-          backgroundColor: "#f0f0f0",
-          border: "1px solid #ccc",
-          borderRadius: "4px",
-          cursor: isUploading ? "not-allowed" : "pointer",
-          display: "flex",
-          width: "fit-content",
-        }}
+        className={`px-1 py-1 bg-white text-black border border-gray-300 rounded-full flex w-fit ${
+          isUploading ? "cursor-not-allowed" : "cursor-pointer"
+        }`}
       >
-        {isUploading ? "Uploading..." : "Choose File & Upload"}
+        {isUploading ? <span className="loading loading-spinner loading-xs"></span> : <FiPlus size={18} />}
       </button>
     </div>
   );
