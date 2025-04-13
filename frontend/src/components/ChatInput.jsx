@@ -5,6 +5,7 @@ import FileUploadButton from "./FileUploadButton";
 import { motion, AnimatePresence } from "framer-motion";
 import { useMediaQuery } from "react-responsive";
 import useWebSocket, { ReadyState } from 'react-use-websocket';
+import { parseLines } from '../utils/textFormat';
 
 export default function ChatInput({ onSendMessage }) {
   const [message, setMessage] = useState("");
@@ -18,10 +19,9 @@ export default function ChatInput({ onSendMessage }) {
     onOpen: () => console.log('WebSocket Connected'),
     onClose: () => console.log('WebSocket Disconnected'),
     onMessage: (event) => {
-      // Append the new chunk to our bot response
-      setBotResponse(prev => prev + event.data);
-      // Update the parent component with the new accumulated message
-      onSendMessage("", (prevText) => prevText + event.data, true);
+      const formattedText = parseLines(event.data);
+      setBotResponse(prev => prev + formattedText);
+      onSendMessage("", (prevText) => prevText + formattedText, true);
     },
     shouldReconnect: (closeEvent) => true,
   });
@@ -190,46 +190,6 @@ export default function ChatInput({ onSendMessage }) {
     };
     animateFrame(start);
   };
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   if (!message.trim() || isSending || animating || readyState !== ReadyState.OPEN) return;
-  
-  //   // Start vanish animation
-  //   setAnimating(true);
-  //   draw();
-  
-  //   const maxX = newDataRef.current.reduce(
-  //     (prev, current) => (current.x > prev ? current.x : prev),
-  //     0
-  //   );
-  //   animate(maxX);
-  
-  //   try {
-  //     setIsSending(true);
-  //     const userMsg = message.trim();
-      
-  //     // First, send the user message to display
-  //     onSendMessage(userMsg);
-      
-  //     // Reset bot response
-  //     setBotResponse("");
-      
-  //     // Then add an empty bot message that will be updated
-  //     onSendMessage("", "", true);
-      
-  //     // Send the message via WebSocket
-  //     sendMessage(userMsg);
-      
-  //     // The WebSocket onMessage handler will update the bot response
-      
-  //   } catch (error) {
-  //     console.error("Error sending message:", error);
-  //     onSendMessage("", "Sorry, I couldn't process your request.", true);
-  //   } finally {
-  //     setIsSending(false);
-  //   }
-  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();

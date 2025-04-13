@@ -59,10 +59,19 @@ def get_rag_chain():
             cohere_api_key=cohere_key
         )
         
-        prompt_template = """Answer the question as precise as possible using the provided context. 
-        If the answer is not contained in the context, say "answer not available in context" \n\n
-        Context: \n {context}?\n
-        Question: \n {question} \n
+        prompt_template = """Answer the question as precisely as possible using only the provided context. STRICTLY FOLLOW THESE FORMATTING RULES::
+        1. If the answer is not in the context, respond with: "Answer not available in context"
+        2. For list-type answers:
+        - Begin each item on a new line
+        - Start with 1. ListItem1\n2. ListItem2\n, etc. followed by exactly one space
+        - Do not add any extra information or commentary
+        3. For other questions, provide the most concise answer possible from the context
+        4. Never add information not present in the context
+
+        Context: {context}
+
+        Question: {question}
+
         Answer:"""
         prompt = PromptTemplate.from_template(template=prompt_template)
 

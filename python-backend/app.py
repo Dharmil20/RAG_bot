@@ -44,24 +44,34 @@ async def websocket_endpoint(websocket: WebSocket):
             # Receive the question from the client
             question = await websocket.receive_text()
             
-            # Process the answer using your RAG pipeline
             try:
                 # Get the full answer
                 full_answer = get_answer_from_query(question)
                 
-                # Stream it word by word (simulating streaming)
-                words = full_answer.split()
-                for i, word in enumerate(words):
-                    # Send each word (with space if not last word)
-                    suffix = " " if i < len(words) - 1 else ""
-                    await manager.send_text(word + suffix, websocket)
-                    await asyncio.sleep(0.05)  # Control the streaming speed
+                # For proper list formatting, we need to preserve newlines when streaming
+                # Split by lines first to maintain the structure
+                lines = full_answer.split('\n')
+                
+                for i, line in enumerate(lines):
+                    # Split each line into words
+                    words = line.split()
+                    
+                    # Stream words in each line
+                    for j, word in enumerate(words):
+                        suffix = " " if j < len(words) - 1 else ""
+                        await manager.send_text(word + suffix, websocket)
+                        await asyncio.sleep(0.02)  # Slightly faster for better UX
+                    
+                    # Add newline between lines (except for the last line)
+                    if i < len(lines) - 1:
+                        await manager.send_text("\n", websocket)
+                        await asyncio.sleep(0.05)  # Small pause after newline
                 
             except Exception as e:
                 await manager.send_text(f"Error: {str(e)}", websocket)
                 
     except WebSocketDisconnect:
-        manager.disconnect(websocket)    
+        manager.disconnect(websocket)
 
 @app.post("/process")
 def process_file_from_url(req: FileRequest):

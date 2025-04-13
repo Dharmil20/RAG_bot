@@ -2,63 +2,73 @@ import { useEffect, useRef, useState } from "react";
 import ChatInput from "./components/ChatInput";
 import { BackgroundBeams } from "./components/ui/BackgroundBeams";
 import { BackgroundGradient } from "./components/ui/background-gradient";
+import { parseLines } from "./utils/textFormat";
 
 function App() {
   const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef(null);
-  
-  const handleSendMessage = (userMessage, botResponseOrUpdater = "", isUpdate = false) => {
+
+  const handleSendMessage = (
+    userMessage,
+    botResponseOrUpdater = "",
+    isUpdate = false
+  ) => {
     setMessages((prev) => {
       // If this is a user message, always add it as a new message
       const newMessages = [...prev];
-      
+
       if (userMessage) {
         newMessages.push({ sender: "user", text: userMessage });
-        
+
         // If we have a bot response, add it as a new message too
-        if (botResponseOrUpdater && typeof botResponseOrUpdater === 'string' && !isUpdate) {
+        if (
+          botResponseOrUpdater &&
+          typeof botResponseOrUpdater === "string" &&
+          !isUpdate
+        ) {
           newMessages.push({ sender: "bot", text: botResponseOrUpdater });
         }
         return newMessages;
       }
-      
+
       // If this is an update to an existing bot message
       if (isUpdate) {
         // Find the last bot message
         const lastBotIndex = newMessages.length - 1;
-        
+
         if (lastBotIndex >= 0 && newMessages[lastBotIndex].sender === "bot") {
           // If botResponseOrUpdater is a function, use it to update the message
-          if (typeof botResponseOrUpdater === 'function') {
+          if (typeof botResponseOrUpdater === "function") {
             newMessages[lastBotIndex] = {
               ...newMessages[lastBotIndex],
-              text: botResponseOrUpdater(newMessages[lastBotIndex].text)
+              text: botResponseOrUpdater(newMessages[lastBotIndex].text),
             };
           } else {
             // Otherwise use it directly as the new text
             newMessages[lastBotIndex] = {
               ...newMessages[lastBotIndex],
-              text: botResponseOrUpdater
+              text: botResponseOrUpdater,
             };
           }
         } else if (botResponseOrUpdater) {
           // If no bot message exists yet but we have a response, add it
-          const newText = typeof botResponseOrUpdater === 'function' 
-            ? botResponseOrUpdater("") 
-            : botResponseOrUpdater;
+          const newText =
+            typeof botResponseOrUpdater === "function"
+              ? botResponseOrUpdater("")
+              : botResponseOrUpdater;
           newMessages.push({ sender: "bot", text: newText });
         }
         return newMessages;
       } else {
         // Add new bot message (not an update)
-        if (botResponseOrUpdater && typeof botResponseOrUpdater === 'string') {
+        if (botResponseOrUpdater && typeof botResponseOrUpdater === "string") {
           newMessages.push({ sender: "bot", text: botResponseOrUpdater });
         }
         return newMessages;
       }
     });
   };
-  
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -96,8 +106,9 @@ function App() {
                   ? "bg-[#1e1e1e]/80 text-white ml-auto"
                   : "bg-[#0e0e0e]/80 text-white border border-gray-600/50 mr-auto rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 "
               }`}
+              style={{ whiteSpace: "pre-line" }}
             >
-              {msg.text}
+              {parseLines(msg.text)}
             </div>
           ))
         )}
