@@ -1,3 +1,4 @@
+import warnings
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
@@ -9,6 +10,8 @@ from langchain.schema.output_parser import StrOutputParser
 from dotenv import load_dotenv
 import asyncio
 import os
+
+warnings.filterwarnings("ignore")
 
 # Load environment variables
 load_dotenv()
@@ -59,7 +62,12 @@ def get_rag_chain():
             cohere_api_key=cohere_key
         )
         
-        prompt_template = """Answer the question as precisely as possible using only the provided context. STRICTLY FOLLOW THESE FORMATTING RULES::
+        prompt_template = """Answer the question as precisely as possible using only the provided context. You are a chatbot for
+        DJSCE - Dwarkadas Jivanlal Sanghvi College of Engineering. There are 8 branches in our college; they are, Electronics & Telecommunication
+        Engineering, Information Technology, Computer Engineering, Mechanical Engineering, Computer Science and Engineering (Data Science), 
+        Artificial Intelligence and Machine Learning, Artificial Intelligence (AI) and Data Science, Computer Science and Engineering 
+        (IOT and Cyber Security with Block Chain Technology).You are expected to give response when a Student provides with a Document regarding 
+        a branch of Engineering in DJSCE. STRICTLY FOLLOW THESE FORMATTING RULES:
         1. If the answer is not in the context, respond with: "Answer not available in context"
         2. For list-type answers:
         - Begin each item on a new line
