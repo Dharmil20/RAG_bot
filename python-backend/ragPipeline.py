@@ -2,11 +2,16 @@ import warnings
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.llms import Cohere
-from langchain.prompts import PromptTemplate
-from langchain.schema.runnable import RunnablePassthrough
-from langchain.schema.output_parser import StrOutputParser
+# from langchain_text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+# from langchain_community.llms import Cohere
+from langchain_cohere import ChatCohere
+# from langchain.prompts import PromptTemplate
+# from langchain.schema.runnable import RunnablePassthrough
+# from langchain.schema.output_parser import StrOutputParser
+from langchain_core.prompts import PromptTemplate
+from langchain_core.runnables import RunnablePassthrough
+from langchain_core.output_parsers import StrOutputParser
 from dotenv import load_dotenv
 import asyncio
 import os
@@ -18,8 +23,8 @@ load_dotenv()
 
 # Constants
 DB_FAISS_PATH = "vectorstore/db_faiss"
-EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
-COHERE_MODEL = "command"
+EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
+COHERE_MODEL = "command-a-03-2025"
 COHERE_TEMPERATURE = 0.1
 
 # Initialize components once (singleton pattern)
@@ -30,7 +35,11 @@ _rag_chain = None
 def get_embeddings():
     global _embeddings
     if _embeddings is None:
-        _embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
+        _embeddings = HuggingFaceEmbeddings(
+            model_name=EMBEDDING_MODEL, 
+            # model_kwargs={"device": "cpu"}, 
+            # encode_kwargs={"normalize_embeddings": True, "batch_size": 32}
+            )
     return _embeddings
 
 def get_vector_store():
@@ -56,7 +65,7 @@ def get_rag_chain():
             raise ValueError("COHERE_API_KEY is not set in environment variables")
 
         # Create RAG chain
-        cohere_llm = Cohere(
+        cohere_llm = ChatCohere(
             model=COHERE_MODEL,
             temperature=COHERE_TEMPERATURE,
             cohere_api_key=cohere_key
@@ -108,10 +117,27 @@ def process_file(file_path):
         documents = loader.load()
 
         text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=500,
-            chunk_overlap=50
+            chunk_size=1000,
+            chunk_overlap=200,
+            length_function=len,
+            separators=[
+                '\n\n',        # Major section breaks (double newline)
+                '\.\s+\n',    # Sentence endings followed by newline
+                '\n',          # Regular line breaks
+                '\.\s+',       # Sentence endings
+                ';',           # Semi-colons
+                ',\s+',        # Commas
+                '\s+',         # Whitespace
+                ''             # Fallback (character-level)
+            ],
+            # Additional optimization parameters
+            keep_separator=True,      # Preserve separators in output
+            is_separator_regex=True,  # Treat separators as regex patterns
+            strip_whitespace=True   
         )
         texts = text_splitter.split_documents(documents)
+
+        texts = [doc for doc in texts if len(doc.page_content.strip()) > 50]
 
         db = FAISS.from_documents(texts, get_embeddings())
         db.save_local(DB_FAISS_PATH)

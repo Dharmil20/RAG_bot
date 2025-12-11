@@ -43,11 +43,11 @@ async def websocket_endpoint(websocket: WebSocket):
         while True:
             # Receive the question from the client
             question = await websocket.receive_text()
-            
+            print("Received question:", question)
             try:
                 # Get the full answer
                 full_answer = get_answer_from_query(question)
-                
+                # print("Full answer:", full_answer)
                 # For proper list formatting, we need to preserve newlines when streaming
                 # Split by lines first to maintain the structure
                 lines = full_answer.split('\n')
@@ -91,6 +91,7 @@ def process_file_from_url(req: FileRequest):
 @app.post("/query")
 def query_rag(req: QueryRequest):
     answer = get_answer_from_query(req.question)
+    print("Final Answer:", answer)
     return {"answer": answer}
 
 @app.post("/stream")

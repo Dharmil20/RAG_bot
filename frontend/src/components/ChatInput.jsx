@@ -230,7 +230,8 @@ export default function ChatInput({ onSendMessage }) {
   };
 
   return (
-    <div className="bg-[#1e1e1e] text-gray-300 p-3 rounded-full w-full max-w-[800px] mx-auto relative">
+    <div className="bg-[#E1E1E1] text-[#2E2A24] p-3 rounded-full w-full max-w-[800px] mx-auto relative">
+    {/* <div className="bg-[#1e1e1e] text-gray-300 p-3 rounded-full w-full max-w-[800px] mx-auto relative"> */}
       <form onSubmit={handleSubmit} className="w-full">
         <div className="flex items-center justify-between relative">
           <canvas
@@ -246,7 +247,8 @@ export default function ChatInput({ onSendMessage }) {
             placeholder=""
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            className={`bg-transparent text-gray-200 w-full outline-none text-base mx-5 ${
+            // className={`bg-transparent text-gray-200 w-full outline-none text-base mx-5 ${
+            className={`bg-transparent text-[#1A1814] w-full outline-none text-base mx-5 ${
               animating ? "text-transparent" : ""
             }`}
             disabled={isSending || animating}
@@ -258,7 +260,8 @@ export default function ChatInput({ onSendMessage }) {
             <button
               type="submit"
               disabled={!message.trim() || isSending || animating}
-              className="p-1 rounded-full hover:bg-gray-700 disabled:opacity-50"
+              // className="p-1 rounded-full hover:bg-gray-700 disabled:opacity-50"
+              className="p-1 rounded-full hover:bg-[#C8BEAE] disabled:opacity-50"
             >
               {isSending ? (
                 <FaRegStopCircle className="text-3xl animate-pulse" />
@@ -291,7 +294,8 @@ export default function ChatInput({ onSendMessage }) {
                   duration: 0.3,
                   ease: "linear",
                 }}
-                className="text-sm sm:text-base font-normal text-gray-400 ml-8 truncate"
+                className="text-sm sm:text-base font-normal text-[#635C50] ml-8 truncate"
+                // className="text-sm sm:text-base font-normal text-gray-400 ml-8 truncate"
               >
                 {placeholders[currentPlaceholder]}
               </motion.p>

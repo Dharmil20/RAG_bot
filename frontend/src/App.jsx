@@ -74,9 +74,11 @@ function App() {
   }, [messages]);
 
   return (
-    <div className="relative flex flex-col h-screen bg-black text-white">
+    <div className="relative flex flex-col h-screen bg-white text-black">
+    {/* <div className="relative flex flex-col h-screen bg-black text-white"> */}
       {/* Header with logo */}
-      <div className="w-full px-4 py-3 border-t border-gray-800 bg-[#0e0e0e] flex justify-center z-10">
+      <div className="w-full px-4 py-3 border-t border-[#E0D6C8] bg-[#F1F1F1] flex justify-center z-10">
+      {/* <div className="w-full px-4 py-3 border-t border-gray-800 bg-[#0e0e0e] flex justify-center z-10"> */}
         <div className="w-full max-w-md">
           <a href="https://www.djsce.ac.in/">
             <img
@@ -96,15 +98,18 @@ function App() {
       {/* Message container */}
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-2 max-w-2xl w-full mx-auto z-10">
         {messages.length === 0 ? (
-          <div className="text-center text-gray-500 mt-20"></div>
+          <div className="text-center text-[#948D7F] mt-20"></div>
+          // <div className="text-center text-gray-500 mt-20"></div>
         ) : (
           messages.map((msg, i) => (
             <div
               key={i}
               className={`p-3 rounded-lg max-w-[80%] break-words backdrop-blur-sm ${
                 msg.sender === "user"
-                  ? "bg-[#1e1e1e]/80 text-white ml-auto"
-                  : "bg-[#0e0e0e]/80 text-white border border-gray-600/50 mr-auto rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 "
+                  ? "bg-[#E1E1E1]/80 text-gray-600 ml-auto"
+                  // ? "bg-[#1e1e1e]/80 text-white ml-auto"
+                  // : "bg-[#0e0e0e]/80 text-white border border-gray-600/50 mr-auto rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 "
+                  : "bg-[#F1F1F1]/80 text-gray-900 border border-[#B4AA9C] mr-auto rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 "
               }`}
               style={{ whiteSpace: "pre-line" }}
             >
@@ -116,10 +121,12 @@ function App() {
       </div>
 
       {/* Chat Input at bottom with proper BackgroundGradient */}
-      <div className="w-full px-2 py-4 border-t border-gray-800 bg-[#0e0e0e]/80 backdrop-blur-sm z-10">
+      <div className="w-full px-2 py-4 border-t border-[#E0D6C8] bg-[#F1F1F1]/80 backdrop-blur-sm z-10">
+      {/* <div className="w-full px-2 py-4 border-t border-gray-800 bg-[#0e0e0e]/80 backdrop-blur-sm z-10"> */}
         <div className="max-w-[800px] mx-auto">
           <BackgroundGradient className="rounded-full">
-            <div className="bg-[#1e1e1e] p-1 rounded-full relative z-10">
+            <div className="bg-[#E1E1E1] p-1 rounded-full relative z-10">
+            {/* <div className="bg-[#1e1e1e] p-1 rounded-full relative z-10"> */}
               <ChatInput onSendMessage={handleSendMessage} />
             </div>
           </BackgroundGradient>

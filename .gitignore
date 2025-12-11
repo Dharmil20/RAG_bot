@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+myenv/
+
+# Node
+node_modules/
+npm-debug.log
+.npm/
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+
+# Uploads
+backend/uploads/
+
+# RES files
+RES*.png
